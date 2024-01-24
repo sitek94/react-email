@@ -45,10 +45,11 @@ const buildPreviewApp = (absoluteDirectory: string) => {
 };
 
 const setNextEnvironmentVariablesForBuild = async (
+  emailsDirRelativePath: string,
   builtPreviewAppPath: string,
 ) => {
   const envVariables = {
-    ...getEnvVariablesForPreviewApp('emails', 'PLACEHOLDER', 'PLACEHOLDER'),
+    ...getEnvVariablesForPreviewApp(emailsDirRelativePath, 'PLACEHOLDER', 'PLACEHOLDER'),
     NEXT_PUBLIC_IS_BUILDING: 'true',
   };
 
@@ -200,7 +201,7 @@ export const build = async ({
     }
 
     const emailsDirPath = path.join(process.cwd(), emailsDirRelativePath);
-    const staticPath = path.join(process.cwd(), 'emails', 'static');
+    const staticPath = path.join(emailsDirPath, 'static');
 
     const builtPreviewAppPath = path.join(process.cwd(), '.react-email');
 
@@ -224,7 +225,7 @@ export const build = async ({
 
     if (fs.existsSync(staticPath)) {
       spinner.text =
-        'Copying `emails/static` folder into `.react-email/public/static`';
+        'Copying `static` folder into `.react-email/public/static`';
       const builtStaticDirectory = path.resolve(
         builtPreviewAppPath,
         './public/static',
@@ -236,7 +237,7 @@ export const build = async ({
 
     spinner.text =
       'Setting Next environment variables for preview app to work properly';
-    await setNextEnvironmentVariablesForBuild(builtPreviewAppPath);
+    await setNextEnvironmentVariablesForBuild(emailsDirRelativePath, builtPreviewAppPath);
 
     spinner.text = 'Setting server side generation for the email preview pages';
     await forceSSGForEmailPreviews(emailsDirPath, builtPreviewAppPath);

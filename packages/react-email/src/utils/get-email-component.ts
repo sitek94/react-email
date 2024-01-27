@@ -84,6 +84,8 @@ export const getEmailComponent = async (
   } catch (exception) {
     const error = exception as Error;
 
+    error.stack &&= error.stack.split('at Script.runInContext (node:vm')[0];
+
     return {
       error: improveErrorWithSourceMap(error, emailPath, sourceMapToEmail),
     };
